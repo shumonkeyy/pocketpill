@@ -54,6 +54,9 @@ button:hover {
 .st-key-stickynote4 {
     background-color: #D1D8BE !important;
 }
+.st-key-stickynote5 {
+    background-color: #FFD6BA !important;
+}
 #root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 0rem !important;padding-bottom: 1rem !important;}
 .st-emotion-cache-1px2jnh { 
         display: flex !important;
@@ -145,5 +148,7 @@ with col3:
                 st.write(filtered_name[["sideEffect0", "sideEffect1", "sideEffect2"]].drop_duplicates().reset_index(drop=True).head(1))
                 st.write("Substitutes")
                 st.write(filtered_name[["substitute0"]].drop_duplicates().reset_index(drop=True).head())
+        with st.container(key="stickynote5", border=True):
+            st.write("chart coming soon")
 
 
