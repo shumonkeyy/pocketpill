@@ -7,7 +7,14 @@ import os
 
 st.set_page_config(layout="wide")
 
-st.markdown('<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">')
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap');
+    </style>
+    """, unsafe_allow_html=True)
+            
 st.markdown(
     """
 <style>
@@ -18,8 +25,16 @@ st.markdown(
     footer {visibility: hidden;}
     header {visibility: hidden;}
 }
+h1 {
+    text-align: center;
+    font-family: "Gamja Flower", sans-serif !important;
+}
+p {
+    font-family: "Coming Soon", sans-serif !important;
+}
+#root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 0rem !important;}
 </style>
-<h1 style="text-align: center;font-family: "Gamja Flower", sans-serif;>PocketPill</h1>
+<h1>PocketPill</h1>
 """,
     unsafe_allow_html=True
 )
@@ -27,10 +42,24 @@ st.markdown(
 if "data_entered" not in st.session_state:
     st.session_state.data_entered = False
 
-side_effects_data = pd.read_csv("data/medicine_dataset.csv").drop_duplicates()
-sorted_data = side_effects_data[[
-    "name", "substitute0", "substitute1", "substitute2", "sideEffect0", "sideEffect1", "sideEffect2"
-]]
+@st.cache_data
+def load_side_effects():
+    return pd.read_csv("data/medicine_dataset.csv").drop_duplicates()
+side_effects_data = load_side_effects()
+
+@st.cache_data
+def load_sorted_side_effects():
+    return side_effects_data[[
+        "name", "substitute0", "substitute1", "substitute2", "sideEffect0", "sideEffect1", "sideEffect2"
+        ]]
+sorted_data = load_sorted_side_effects()
+
+@st.cache_data
+def clean_side_effects():
+    side_effects_data["name"] = side_effects_data["name"].str.split().str[0]
+    return side_effects_data["name"].drop_duplicates()
+clean_name = clean_side_effects()
+
 
 df = pd.read_csv("data/drugsComTrain_raw.csv")
 df = df.dropna(subset=["condition"])
@@ -40,6 +69,7 @@ df = df.drop(columns=["review", "date"])
 df = df.drop(columns=df.columns[:1])
 df = df.reset_index(drop=True)
 conditions = sorted(df["condition"].unique())
+
 
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -71,8 +101,8 @@ with col2:
 with col3:
     if st.session_state.data_entered==True:
         with st.container(border=True):
-            st.write("Medical Side Effects and Remedies")
-            medication_input = st.text_input("Your Medication").lower()
+            st.write("Medical Side Effects and Substitutes")
+            medication_input = st.selectbox("Generic (non-brand) Name of Your Medication", clean_name)
             if medication_input:
                 filtered_name = sorted_data[sorted_data['name'].str.lower().str.contains(medication_input)]
                 st.write("Side Effects:")
