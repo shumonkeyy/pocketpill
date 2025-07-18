@@ -79,6 +79,7 @@ if "data_entered" not in st.session_state:
 def load_side_effects():
     return pd.read_csv("data/medicine_dataset.csv").drop_duplicates()
 side_effects_data = load_side_effects()
+bar_chart_data = load_side_effects()
 
 @st.cache_data
 def load_sorted_side_effects():
