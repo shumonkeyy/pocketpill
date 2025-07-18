@@ -61,10 +61,16 @@ button:hover {
         align-items: stretch !important;
     }
 </style>
-<h1>PocketPill</h1>
+<div>
+</div>
 """,
     unsafe_allow_html=True
 )
+st.markdown(
+    """
+    <h1 style="display: inline;">PocketPill</h1>
+    """, unsafe_allow_html=True)
+st.image("data/PILL.png", width=50)
 
 if "data_entered" not in st.session_state:
     st.session_state.data_entered = False
@@ -82,10 +88,11 @@ def load_sorted_side_effects():
 sorted_data = load_sorted_side_effects()
 
 @st.cache_data
-def clean_side_effects():
-    side_effects_data["name"] = side_effects_data["name"].str.split().str[0]
-    return side_effects_data["name"].drop_duplicates()
-clean_name = clean_side_effects()
+def clean_side_effects(side_effects_data):
+    df = side_effects_data.copy()
+    df["name"] = df["name"].str.split().str[0]
+    return df[df["name"].apply(lambda x: len(str(x)) > 3)]["name"].drop_duplicates()
+clean_name = clean_side_effects(side_effects_data)
 
 
 df = pd.read_csv("data/drugsComTrain_raw.csv")
@@ -95,8 +102,8 @@ df = df[df["condition"] <= "Zollinger-Ellison Syndrome"]
 df = df.drop(columns=["review", "date"])
 df = df.drop(columns=df.columns[:1])
 df = df.reset_index(drop=True)
+df = df.drop_duplicates(subset=["drugName","condition"])
 conditions = sorted(df["condition"].unique())
-
 
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -134,8 +141,8 @@ with col3:
             if medication_input:
                 filtered_name = sorted_data[sorted_data['name'].str.lower().str.contains(medication_input)]
                 st.write("Side Effects:")
-                st.write(filtered_name[["sideEffect0", "sideEffect1", "sideEffect2"]].drop_duplicates())
+                st.write(filtered_name[["sideEffect0", "sideEffect1", "sideEffect2"]].drop_duplicates().reset_index(drop=True).head(1))
                 st.write("Substitutes")
-                st.write(filtered_name[["substitute0"]].drop_duplicates())
+                st.write(filtered_name[["substitute0"]].drop_duplicates().reset_index(drop=True).head())
 
 
