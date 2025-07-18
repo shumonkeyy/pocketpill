@@ -28,11 +28,38 @@ st.markdown(
 h1 {
     text-align: center;
     font-family: "Gamja Flower", sans-serif !important;
+    color: black !important;
 }
 p {
     font-family: "Coming Soon", sans-serif !important;
+    color: black !important;
 }
-#root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 0rem !important;}
+button {
+    background-color: white !important;
+    border: 1px solid black !important;
+}
+button:hover {
+    border: 1px solid #748DAE !important;
+    transition: 1s;
+}
+.st-key-stickynote1 {
+    background-color: #9ECAD6 !important;
+}
+.st-key-stickynote2 {
+    background-color: #FFE8CD !important;
+}
+.st-key-stickynote3 {
+    background-color: #FFEAEA !important;
+}
+.st-key-stickynote4 {
+    background-color: #D1D8BE !important;
+}
+#root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 0rem !important;padding-bottom: 1rem !important;}
+.st-emotion-cache-1px2jnh { 
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+    }
 </style>
 <h1>PocketPill</h1>
 """,
@@ -73,20 +100,21 @@ conditions = sorted(df["condition"].unique())
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    with st.container(border=True):
+    with st.container(key="stickynote1", border=True):
         st.write("Fill this out!")
-        patient_name = st.text_input("Name:")
-        patient_age = st.text_input("Age:")
-        patient_gender = st.text_input("Gender:")
-        selected_condition = st.selectbox("Choose a condition to filter by:", conditions)
+        st.text_input("Name:")
+        st.text_input("Age:")
+        st.text_input("Gender:")
+        selected_condition = st.selectbox("Choose a condition to filter by:", conditions, placeholder="Select Condition")
         if st.button("Submit"):
             st.session_state.data_entered = True
-    with st.container(border=True):
+    with st.container(key="stickynote2", border=True):
         st.write("Instructions for PillPocket")
+        st.write("Tell us about yourself. Browse recommended medications tailored to you. Research drugs thoroughly before requesting a formal prescription, or purchasing a non-prescription medication.")
 
 with col2:
     if st.session_state.data_entered==True:
-        with st.container(border=True,height=500):
+        with st.container(key="stickynote3", border=True):
             filtered_df = df[df["condition"] == selected_condition]
             sort_option = st.radio(
                 "Sort reviews by:",
@@ -94,13 +122,13 @@ with col2:
                 index=0,
                 horizontal=True
                 )
-            filtered_df = filtered_df.sort_values(by=sort_option, ascending=False)
+            filtered_df = filtered_df.sort_values(by=sort_option, ascending=False).reset_index(drop=True)
             st.write(f"Showing reviews for: **{selected_condition}** (sorted by **{sort_option}**)")
             st.dataframe(filtered_df.head(10))
 
 with col3:
     if st.session_state.data_entered==True:
-        with st.container(border=True):
+        with st.container(key="stickynote4", border=True):
             st.write("Medical Side Effects and Substitutes")
             medication_input = st.selectbox("Generic (non-brand) Name of Your Medication", clean_name)
             if medication_input:
