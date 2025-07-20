@@ -113,15 +113,30 @@ df = df.reset_index(drop=True)
 df = df.drop_duplicates(subset=["drugName","condition"])
 conditions = sorted(df["condition"].unique())
 
+side_effect_cols = [col for col in bar_chart_data.columns if 'sideeffect' in col.lower()]
+all_effects = []
+for col in side_effect_cols:
+    all_effects += bar_chart_data[col].dropna().astype(str).str.capitalize().tolist()
+side_effect_counts = Counter(all_effects)
+side_df = pd.DataFrame(side_effect_counts.items(), columns=["Side Effect", "Count"])
+side_df_top = side_df.sort_values(by="Count", ascending=False).head(20)
+
 col1, col2, col3 = st.columns(3)
 with col1:
     with st.container(key="stickynote1", border=True):
-        st.write("Instructions for PillPocket")
+        st.write("Instructions for PocketPill")
         st.write("Tell us about yourself. Browse recommended medications tailored to you. Research drugs thoroughly before requesting a formal prescription, or purchasing a non-prescription medication.")
     with st.container(key="stickynote2", border=True):
         selected_condition = st.selectbox("Choose a condition to filter by:", conditions, placeholder="Select Condition")
         if selected_condition:
             st.session_state.data_entered = True
+    with st.container(key="stickynote5", border=True):
+        fig, ax = plt.subplots(figsize=(12, 8))
+        sns.barplot(data=side_df_top, y="Side Effect", x="Count", palette="bone", ax=ax)
+        ax.set_title("Top Side Effects")
+        ax.set_xlabel("Occurrences")
+        ax.set_ylabel("Side Effect")
+        st.pyplot(fig)
 
 with col2:
     with st.container(key="stickynote3", border=True):
@@ -146,20 +161,5 @@ with col3:
             st.write(filtered_name[["sideEffect0", "sideEffect1", "sideEffect2"]].drop_duplicates().reset_index(drop=True).head(1))
             st.write("Substitutes")
             st.write(filtered_name[["substitute0"]].drop_duplicates().reset_index(drop=True).head())
-    with st.container(key="stickynote5", border=True):
-        st.write("chart coming soon")
 
 
-side_effect_cols = [col for col in bar_chart_data.columns if 'sideeffect' in col.lower()]
-all_effects = []
-for col in side_effect_cols:
-    all_effects += bar_chart_data[col].dropna().astype(str).str.capitalize().tolist()
-side_effect_counts = Counter(all_effects)
-side_df = pd.DataFrame(side_effect_counts.items(), columns=["Side Effect", "Count"])
-side_df_top = side_df.sort_values(by="Count", ascending=False).head(20)
-fig, ax = plt.subplots(figsize=(12, 8))
-sns.barplot(data=side_df_top, y="Side Effect", x="Count", palette="bone", ax=ax)
-ax.set_title("Top Side Effects")
-ax.set_xlabel("Occurrences")
-ax.set_ylabel("Side Effect")
-st.pyplot(fig)
