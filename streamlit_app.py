@@ -61,6 +61,11 @@ button:hover {
 .st-key-stickynote5 {
     background-color: #FFD6BA !important;
 }
+[data-testid="stHorizontalBlock"] {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+}
 #root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 0rem !important;padding-bottom: 1rem !important;}
 .st-emotion-cache-1px2jnh { 
         display: flex !important;
@@ -75,7 +80,7 @@ button:hover {
 )
 st.markdown(
     """
-    <h1 style="display: inline;">PocketPill</h1>
+    <h1>PocketPill 💊</h1>
     """, unsafe_allow_html=True)
 # st.image("data/PILL.png", width=50)
 
@@ -139,7 +144,7 @@ with col1:
         st.pyplot(fig)
 
 with col2:
-    with st.container(key="stickynote3", border=True):
+    with st.container(key="stickynote3", border=True, height=400):
         filtered_df = df[df["condition"] == selected_condition]
         sort_option = st.radio(
             "Sort reviews by:",
@@ -150,6 +155,8 @@ with col2:
         filtered_df = filtered_df.sort_values(by=sort_option, ascending=False).reset_index(drop=True)
         st.write(f"Showing reviews for: **{selected_condition}** (sorted by **{sort_option}**)")
         st.dataframe(filtered_df.head(10))
+    with st.container(border=True, height=150):
+        st.write("chatbot coming soon")
 
 with col3:
     with st.container(key="stickynote4", border=True):
