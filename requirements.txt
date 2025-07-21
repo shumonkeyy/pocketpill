@@ -4,3 +4,5 @@ altair
 matplotlib
 seaborn
 numpy
+openai
+openai>=1.0.0
