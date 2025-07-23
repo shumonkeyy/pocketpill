@@ -6,4 +6,4 @@ seaborn
 numpy
 openai
 openai>=1.0.0
-deep_translator
+deep-translator
