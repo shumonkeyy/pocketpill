@@ -86,9 +86,6 @@ st.markdown(
     <h1>PocketPill 💊</h1>
     """, unsafe_allow_html=True)
 
-if "data_entered" not in st.session_state:
-    st.session_state.data_entered = False
-
 @st.cache_data
 def load_side_effects():
     return pd.read_csv("data/medicine_dataset.csv").drop_duplicates()
